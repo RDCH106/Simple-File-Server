@@ -125,7 +125,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         else:
             f.write("<strong>Failed:</strong>")
         f.write(info)
-        f.write("<br><a href=\"%s\">back</a>" % urllib.quote(self.headers['referer']))
+        f.write("<br><a href=\"%s\">back</a>" % self.headers['referer'])
         f.write("<hr><small>Powerd By: bones7456, check new version at ")
         f.write("<a href=\"http://li2z.cn/?s=SimpleHTTPServerWithUpload\">")
         f.write("</body>\n</html>\n")
@@ -152,7 +152,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if not fn:
             return (False, "Can't find out file name...")
         path = self.url_path_to_file_path(self.path)
-        fn = os.path.join(path, fn[0].replace('\\', '/').split('/')[-1])
+        fn = os.path.join(path, fn[0])
         if os.path.exists(fn):
             return (False, "The path already exists, you cannot overwrite it.")
         line = self.rfile.readline()
