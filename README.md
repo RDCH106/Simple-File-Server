@@ -1,5 +1,7 @@
 # Simple-File-Server
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a2b646100fc84cf2901f3ae86dcbdc1d)](https://www.codacy.com/app/RDCH106/Simple-File-Server?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=RDCH106/Simple-File-Server&amp;utm_campaign=Badge_Grade)
+
 Simple Python File Server with browser upload and authentication.
 
 Simple tool that gave secure remote file control with no client-side installation.
