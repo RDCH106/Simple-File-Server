@@ -1,6 +1,6 @@
 # Simple-File-Server
 
-Simple Python File Server with browse upload and authentication.
+Simple Python File Server with browser upload and authentication.
 
 Simple tool that gave secure remote file control with no client-side installation.
 
