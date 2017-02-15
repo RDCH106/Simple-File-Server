@@ -8,7 +8,7 @@ and HEAD requests in a fairly straightforward manner.
 """
 
 __author__ = "bones7456"
-__contributors__ = "wonjohnchoi, shellster"
+__contributors__ = "wonjohnchoi, shellster, RDCH106"
 
 import os
 import posixpath
@@ -126,8 +126,8 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             f.write("<strong>Failed:</strong>")
         f.write(info)
         f.write("<br><a href=\"%s\">back</a>" % self.headers['referer'])
-        f.write("<hr><small>Powerd By: bones7456, check new version at ")
-        f.write("<a href=\"http://li2z.cn/?s=SimpleHTTPServerWithUpload\">")
+        f.write("<hr><small>Powerd By: <a href=\"https://github.com/RDCH106\">RDCH106</a>, check new version at ")
+        f.write("<a href=\"https://github.com/RDCH106/Simple-File-Server\">GitHub</a>")
         f.write("</body>\n</html>\n")
         length = f.tell()
         f.seek(0)
@@ -294,17 +294,11 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         return f
 
     def url_path_to_file_path(self, url_path):
-        # 'base_url/' => '/'
-        # 'base_url/home/' => '/home'
-        # 'base_url/home/test/' => '/home/test'
-        # 'base_url/home/test.zip' => '/home/test.zip'
-        # 'base_url/home/%22test%22/' => '/home/"test"'
-        url_path = url_path[len(settings.base_url):]
         # abandon query parameters
         url_path = url_path.split('?',1)[0]
         url_path = url_path.split('#',1)[0]
         url_path = posixpath.normpath(urllib.unquote(url_path))
-        return url_path
+        return settings.base_url + url_path
 
     def copyfile(self, source, outputfile):
         """Copy all data between two file objects.
