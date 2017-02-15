@@ -92,15 +92,21 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def try_authenticate(self):
         if not self.is_authenticated():
             self.do_AUTHHEAD()
-            print 'not authenticated'
-            self.wfile.write('not authenticated')
+            print 'Not authenticated'
+            self.wfile.write('Not authenticated')
             return False
         return True
 
     def do_GET(self):
         if not self.try_authenticate():
             return
-        print 'authenticated'
+        print 'Authenticated'
+
+        if self.path == "/logout":
+            print 'Logout'
+            self.do_AUTHHEAD()
+            self.wfile.write('Logout')
+            return
 
         f = self.send_head()
         if f:
@@ -284,7 +290,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             rgb_r = 255 * (float(counts) / tot_counts) ** 0.2
             f.write('<li><a style="color:rgb(%d,0,0)" href="%s">%s</a>\n'
                     % (rgb_r, urllib.quote(linkname), cgi.escape(displayname)))
-        f.write("</ul>\n<hr>\n</body>\n</html>\n")
+        f.write("</ul>\n<hr>\n<a href=\"/logout\">Logout</a>\n</body>\n</html>\n")
         length = f.tell()
         f.seek(0)
         self.send_response(200)
