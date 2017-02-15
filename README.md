@@ -36,6 +36,6 @@ Check the file server at http://host:port/base_url
 `sudo ./uninstall`
 
 ###Credit
-This is a fork of https://github.com/wonjohnchoi/Simple-Python-File-Server-With-Browse-Upload-and-Authentication written by @wonjohnchoi (who also forked of http://li2z.cn/?s=SimpleHTTPServerWithUpload  written by bones7456 who also was forked from http://www.opensource.apple.com/source/python/python-3/python/Lib/SimpleHTTPServer.py)
+This is a fork of https://github.com/wonjohnchoi/Simple-Python-File-Server-With-Browse-Upload-and-Authentication written by [wonjohnchoi](https://github.com/wonjohnchoi) (who also forked of http://li2z.cn/?s=SimpleHTTPServerWithUpload  written by bones7456 who also was forked from http://www.opensource.apple.com/source/python/python-3/python/Lib/SimpleHTTPServer.py)
 
 This fork basically adds install scripts, authentication, and some more on top of the original code that supports directory browse and file upload.
