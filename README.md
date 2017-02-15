@@ -1,5 +1,8 @@
 # Simple-File-Server
-Simple Python File Server with browse upload and authentication
+
+Simple Python File Server with browse upload and authentication.
+
+Simple tool that gave secure remote file control with no client-side installation.
 
 ### What is this?
 This is a simple file server that
@@ -8,22 +11,19 @@ This is a simple file server that
 * supports authentication
 * marks frequently visited directories for easier navigation
 
-It is tested with Ubuntu 14.04, python 2.7.6
+Find the latest version at https://github.com/RDCH106/Simple-File-Server
 
-Find the latest version at https://github.com/wonjohnchoi/Simple-Python-File-Server-With-Browse-Upload-and-Authentication
+### How To Run
 
-### Why did I make this?
-Currently, I am in an environment where I am not allowed to install anything on my desktop for some security reason.
+Configure the `setting.py` file with the desired configuration and run as other python program:
 
-When using my toy aws ec2 instance, shellinabox was super useful because it gave secure remote shell access with no client-side installation.
+`python simple_file_server.py`
 
-But I could not find any simple tool that gave secure remote file control with no client-side installation.
+To run the server in background redirecting the log `tmp` symtem folder:
 
-So I forked off SimpleHTTPServerWithUpload written by bones7456 to make this tool.
+`python simple_file_server.py > /tmp/simple_file_server.log 2>&1 &` (**only in GNU/Linux**)
 
-I use this everyday in addition to shellinabox to have full control over my aws instance, and it's super convenient.
-
-###How To Install
+### How To Install
 Read and edit settings.py.
 
 `sudo ./install`
@@ -36,6 +36,6 @@ Check the file server at http://host:port/base_url
 `sudo ./uninstall`
 
 ###Credit
-This is a fork of http://li2z.cn/?s=SimpleHTTPServerWithUpload written by bones7456 (who also forked from http://www.opensource.apple.com/source/python/python-3/python/Lib/SimpleHTTPServer.py)
+This is a fork of https://github.com/wonjohnchoi/Simple-Python-File-Server-With-Browse-Upload-and-Authentication written by @wonjohnchoi (who also forked of http://li2z.cn/?s=SimpleHTTPServerWithUpload  written by bones7456 who also was forked from http://www.opensource.apple.com/source/python/python-3/python/Lib/SimpleHTTPServer.py)
 
 This fork basically adds install scripts, authentication, and some more on top of the original code that supports directory browse and file upload.
