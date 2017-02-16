@@ -22,7 +22,6 @@ try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
-import sys
 import base64
 import settings
 
@@ -46,7 +45,6 @@ class Counter:
         res += 1
         self.cursor.execute('REPLACE INTO counter(fullpath, count) VALUES(?, ?)', (path, res))
         self.conn.commit()
-        pass
 
     def read_counter(self, path):
         """ Read the counter that counts how many times a path is visited """
@@ -114,11 +112,13 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             f.close()
 
     def do_POST(self):
+        """Serve a POST request."""
+
         if not self.try_authenticate():
             return
         print 'authenticated'
 
-        """Serve a POST request."""
+
         r, info = self.deal_post_data()
         print r, info, "by: ", self.client_address
         f = StringIO()
@@ -299,14 +299,16 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.end_headers()
         return f
 
-    def url_path_to_file_path(self, url_path):
+    @staticmethod
+    def url_path_to_file_path(url_path):
         # abandon query parameters
         url_path = url_path.split('?',1)[0]
         url_path = url_path.split('#',1)[0]
         url_path = posixpath.normpath(urllib.unquote(url_path))
         return settings.base_url + url_path
 
-    def copyfile(self, source, outputfile):
+    @staticmethod
+    def copyfile(source, outputfile):
         """Copy all data between two file objects.
 
         The SOURCE argument is a file object open for reading
