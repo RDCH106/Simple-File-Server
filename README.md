@@ -4,7 +4,7 @@
 
 Simple Python File Server with browser upload and authentication.
 
-Simple tool that gave secure remote file control with no client-side installation.
+Simple tool that gives secure remote file control with no client-side installation.
 
 ### What is this?
 This is a simple file server that
