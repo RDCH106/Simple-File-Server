@@ -1,4 +1,5 @@
 .idea
 *.pyc
 *.db
-*dummy*
+files/*
+!files/dummy.txt
