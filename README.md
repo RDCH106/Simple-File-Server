@@ -4,7 +4,7 @@
 
 Simple Python File Server with browser upload and authentication.
 
-Simple tool that gave secure remote file control with no client-side installation.
+Simple tool that gives secure remote file control with no client-side installation.
 
 ### What is this?
 This is a simple file server that
@@ -13,7 +13,8 @@ This is a simple file server that
 * supports authentication
 * marks frequently visited directories for easier navigation
 
-Find the latest version at https://github.com/RDCH106/Simple-File-Server
+Find the latest code version at https://github.com/RDCH106/Simple-File-Server
+Find the latest release at https://github.com/RDCH106/Simple-File-Server/releases
 
 ### How To Run
 
