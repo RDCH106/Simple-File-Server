@@ -96,20 +96,24 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         return True
 
     def do_GET(self):
-        if not self.try_authenticate():
-            return
-        print 'Authenticated'
+        if not self.path == "/logout":
+            if not self.try_authenticate():
+                return
+            else:
+                print 'Authenticated'
 
         if self.path == "/logout":
             print 'Logout'
-            self.do_AUTHHEAD()
+            self.send_response(401)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
             self.wfile.write('Logout')
-            return
 
-        f = self.send_head()
-        if f:
-            self.copyfile(f, self.wfile)
-            f.close()
+        else:
+            f = self.send_head()
+            if f:
+                self.copyfile(f, self.wfile)
+                f.close()
 
     def do_POST(self):
         """Serve a POST request."""
