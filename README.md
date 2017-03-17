@@ -16,6 +16,10 @@ This is a simple file server that
 Find the latest code version at https://github.com/RDCH106/Simple-File-Server
 Find the latest release at https://github.com/RDCH106/Simple-File-Server/releases
 
+### How to configure server
+
+First execution, into config folder, from `default.json` will create `config.json` with initial configuration values. You can edit them to use other port, password, etc...
+ 
 ### How To Run
 
 Configure the `setting.py` file with the desired configuration and run as other python program:
