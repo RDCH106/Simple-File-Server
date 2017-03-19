@@ -10,7 +10,12 @@ and HEAD requests in a fairly straightforward manner.
 __author__ = "bones7456"
 __contributors__ = "wonjohnchoi, shellster, RDCH106"
 
+default_setting_file_name = 'config/default.json'
+setting_file_name = 'config/config.json'
+settings = ""
+
 import os
+import sys
 import posixpath
 import BaseHTTPServer
 import urllib
@@ -23,10 +28,23 @@ try:
 except ImportError:
     from StringIO import StringIO
 import base64
-import settings
+import json
 
 def key():
-    return base64.b64encode('%s:%s' % (settings.username, settings.password))
+    return base64.b64encode('%s:%s' % (settings["username"], settings["password"]))
+
+def read_config():
+    global settings
+    exist = os.path.isfile(setting_file_name)
+    if not exist:
+        print 'Creating config file...'
+        shutil.copyfile(default_setting_file_name, setting_file_name)
+        print 'Edit config.json and launch the script again.'
+        sys.exit()
+
+    with open(setting_file_name) as data_file:
+        settings = json.load(data_file)
+    return
 
 class Counter:
     ''' instantiate only once '''
@@ -83,7 +101,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def do_AUTHHEAD(self):
         self.send_response(401)
-        self.send_header('WWW-Authenticate', 'Basic realm=\"%s\"' % settings.realm)
+        self.send_header('WWW-Authenticate', 'Basic realm=\"%s\"' % settings["realm"])
         self.send_header('Content-type', 'text/html')
         self.end_headers()
 
@@ -322,7 +340,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         url_path = url_path.split('?',1)[0]
         url_path = url_path.split('#',1)[0]
         url_path = posixpath.normpath(urllib.unquote(url_path))
-        return settings.base_url + url_path
+        return settings["base_url"] + url_path
 
     @staticmethod
     def copyfile(source, outputfile):
@@ -376,7 +394,9 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         })
 
 if __name__ == '__main__':
-    print 'listening on %s:%d with key %s' %(settings.host, settings.port, key())
-    server = BaseHTTPServer.HTTPServer((settings.host, settings.port), SimpleHTTPRequestHandler)
+    print 'Reading settings from %s...' %(setting_file_name)
+    read_config()
+    print 'listening on %s:%d with key %s' %(settings["host"], int(settings["port"]), key())
+    server = BaseHTTPServer.HTTPServer((settings["host"], int(settings["port"])), SimpleHTTPRequestHandler)
     print 'Starting server, use <Ctrl-C> to stop'
     server.serve_forever()

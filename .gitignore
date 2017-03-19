@@ -3,3 +3,4 @@
 *.db
 files/*
 !files/dummy.txt
+config/config.json
