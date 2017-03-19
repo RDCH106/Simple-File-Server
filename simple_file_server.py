@@ -8,7 +8,7 @@ and HEAD requests in a fairly straightforward manner.
 """
 
 __author__ = "bones7456"
-__contributors__ = "wonjohnchoi, shellster, RDCH106"
+__contributors__ = "wonjohnchoi, shellster, RDCH106, vgonisanz"
 
 default_setting_file_name = 'config/default.json'
 setting_file_name = 'config/config.json'
