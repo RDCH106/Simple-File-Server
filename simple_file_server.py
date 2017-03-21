@@ -8,9 +8,14 @@ and HEAD requests in a fairly straightforward manner.
 """
 
 __author__ = "bones7456"
-__contributors__ = "wonjohnchoi, shellster, RDCH106"
+__contributors__ = "wonjohnchoi, shellster, RDCH106, vgonisanz"
+
+default_setting_file_name = 'config/default.json'
+setting_file_name = 'config/config.json'
+settings = ""
 
 import os
+import sys
 import posixpath
 import BaseHTTPServer
 import urllib
@@ -23,10 +28,23 @@ try:
 except ImportError:
     from StringIO import StringIO
 import base64
-import settings
+import json
 
 def key():
-    return base64.b64encode('%s:%s' % (settings.username, settings.password))
+    return base64.b64encode('%s:%s' % (settings["username"], settings["password"]))
+
+def read_config():
+    global settings
+    exist = os.path.isfile(setting_file_name)
+    if not exist:
+        print 'Creating config file...'
+        shutil.copyfile(default_setting_file_name, setting_file_name)
+        print 'Edit config.json and launch the script again.'
+        sys.exit()
+
+    with open(setting_file_name) as data_file:
+        settings = json.load(data_file)
+    return
 
 class Counter:
     ''' instantiate only once '''
@@ -83,7 +101,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def do_AUTHHEAD(self):
         self.send_response(401)
-        self.send_header('WWW-Authenticate', 'Basic realm=\"Test\"')
+        self.send_header('WWW-Authenticate', 'Basic realm=\"%s\"' % settings["realm"])
         self.send_header('Content-type', 'text/html')
         self.end_headers()
 
@@ -96,20 +114,24 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         return True
 
     def do_GET(self):
-        if not self.try_authenticate():
-            return
-        print 'Authenticated'
+        if not self.path == "/logout":
+            if not self.try_authenticate():
+                return
+            else:
+                print 'Authenticated'
 
         if self.path == "/logout":
             print 'Logout'
-            self.do_AUTHHEAD()
+            self.send_response(401)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
             self.wfile.write('Logout')
-            return
 
-        f = self.send_head()
-        if f:
-            self.copyfile(f, self.wfile)
-            f.close()
+        else:
+            f = self.send_head()
+            if f:
+                self.copyfile(f, self.wfile)
+                f.close()
 
     def do_POST(self):
         """Serve a POST request."""
@@ -122,19 +144,16 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         r, info = self.deal_post_data()
         print r, info, "by: ", self.client_address
         f = StringIO()
-        f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
-        f.write("<html>\n<title>Upload Result Page</title>\n")
-        f.write("<body>\n<h2>Upload Result Page</h2>\n")
+        self.writeHeader(f, "Upload Result")
+        f.write("<h2>Upload Result Page</h2>\n")
         f.write("<hr>\n")
         if r:
             f.write("<strong>Success:</strong>")
         else:
             f.write("<strong>Failed:</strong>")
         f.write(info)
-        f.write("<br><a href=\"%s\">back</a>" % self.headers['referer'])
-        f.write("<hr><small>Powerd By: <a href=\"https://github.com/RDCH106\">RDCH106</a>, check new version at ")
-        f.write("<a href=\"https://github.com/RDCH106/Simple-File-Server\">GitHub</a>")
-        f.write("</body>\n</html>\n")
+        f.write("\n<br><br>\n<a href=\"%s\">back</a>\n" % self.headers['referer'])
+        self.writeFooter(f)
         length = f.tell()
         f.seek(0)
         self.send_response(200)
@@ -255,13 +274,13 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             list = ['..'] + list
         f = StringIO()
         displaypath = cgi.escape(urllib.unquote(self.path))
-        f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
-        f.write("<html>\n<title>Directory listing for %s</title>\n" % displaypath)
-        f.write("<body>\n<h2>Directory listing for %s (frequently used directories are more reddish)</h2>\n" % displaypath)
+
+        self.writeHeader(f, "Simple-File-Server")
+        f.write("<h2>Directory listing for <small>%s (frequently used directories are more reddish)</small></h2>\n" % displaypath)
         f.write("<hr>\n")
-        f.write("<form ENCTYPE=\"multipart/form-data\" method=\"post\">")
-        f.write("<input name=\"file\" type=\"file\"/>")
-        f.write("<input type=\"submit\" value=\"upload\"/></form>\n")
+        f.write("<form ENCTYPE=\"multipart/form-data\" method=\"post\" class=\"form-inline\">")
+        f.write("<div class=\"form-group\"><input name=\"file\" type=\"file\"/ class=\"btn btn-default\"></div>")
+        f.write("&nbsp;&nbsp;&nbsp;<div class=\"form-group\"><input type=\"submit\" value=\"upload\"/ class=\"btn btn-primary\"></div></form>\n")
         f.write("<hr>\n<ul>\n")
 
         tot_counts = 0
@@ -290,7 +309,8 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             rgb_r = 255 * (float(counts) / tot_counts) ** 0.2
             f.write('<li><a style="color:rgb(%d,0,0)" href="%s">%s</a>\n'
                     % (rgb_r, urllib.quote(linkname), cgi.escape(displayname)))
-        f.write("</ul>\n<hr>\n<a href=\"/logout\">Logout</a>\n</body>\n</html>\n")
+        f.write("</ul>\n")
+        self.writeFooter(f)
         length = f.tell()
         f.seek(0)
         self.send_response(200)
@@ -300,12 +320,27 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         return f
 
     @staticmethod
+    def writeHeader(f, title):
+        f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\n')
+        f.write("<html>\n<head>\n<link rel=\"icon\" href=\"https://raw.githubusercontent.com/RDCH106/Simple-File-Server/master/SFS.ico\">")
+        f.write("<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\">\n")
+        f.write("<title>%s</title>\n</head>\n" % title)
+        f.write("<body>\n<div class=\"container\">\n")
+
+    @staticmethod
+    def writeFooter(f):
+        f.write("<hr>\n<small>\nPowered By: <a href=\"https://github.com/RDCH106\">RDCH106</a>, check new version at ")
+        f.write("<a href=\"https://github.com/RDCH106/Simple-File-Server\">GitHub</a>\n</small>\n")
+        f.write("<h4><a href=\"/logout\">Logout</a></h4>\n")
+        f.write("</div>\n</body>\n</html>\n")
+
+    @staticmethod
     def url_path_to_file_path(url_path):
         # abandon query parameters
         url_path = url_path.split('?',1)[0]
         url_path = url_path.split('#',1)[0]
         url_path = posixpath.normpath(urllib.unquote(url_path))
-        return settings.base_url + url_path
+        return settings["base_url"] + url_path
 
     @staticmethod
     def copyfile(source, outputfile):
@@ -359,7 +394,9 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         })
 
 if __name__ == '__main__':
-    print 'listening on %s:%d with key %s' %(settings.host, settings.port, key())
-    server = BaseHTTPServer.HTTPServer((settings.host, settings.port), SimpleHTTPRequestHandler)
+    print 'Reading settings from %s...' %(setting_file_name)
+    read_config()
+    print 'listening on %s:%d with key %s' %(settings["host"], int(settings["port"]), key())
+    server = BaseHTTPServer.HTTPServer((settings["host"], int(settings["port"])), SimpleHTTPRequestHandler)
     print 'Starting server, use <Ctrl-C> to stop'
     server.serve_forever()
