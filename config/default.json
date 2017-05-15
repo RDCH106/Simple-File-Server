@@ -5,5 +5,11 @@
   "username" : "admin",
   "password" : "mypassword",
   "realm" : "My Server",
-  "force-download": false
+  "force-download": false,
+  "extensions" : {
+    ".py": "text/plain",
+    ".c": "text/plain",
+    ".h": "text/plain",
+    ".txt" : "text/plain; charset=utf-8"
+  }
 }

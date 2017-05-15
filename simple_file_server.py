@@ -35,6 +35,7 @@ def key():
 
 def read_config():
     global settings
+    global extensions_map
     exist = os.path.isfile(setting_file_name)
     if not exist:
         print 'Creating config file...'
@@ -44,6 +45,18 @@ def read_config():
 
     with open(setting_file_name) as data_file:
         settings = json.load(data_file)
+
+        ####################################################################
+        #Load default mimetypes and update them with config.json extensions#
+        ####################################################################
+        if not mimetypes.inited:
+            mimetypes.init()  # try to read system mime.types
+        extensions_map = mimetypes.types_map.copy()
+        extensions_map.update({
+            '': 'application/octet-stream'  # Default
+        })
+        extensions_map.update(settings['extensions'])  # Read extensions from config.json
+        #####################################################################
     return
 
 class Counter:
@@ -377,23 +390,13 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         """
 
         base, ext = posixpath.splitext(path)
-        if ext in self.extensions_map:
-            return self.extensions_map[ext]
+        if ext in extensions_map:
+            return extensions_map[ext]
         ext = ext.lower()
-        if ext in self.extensions_map:
-            return self.extensions_map[ext]
+        if ext in extensions_map:
+            return extensions_map[ext]
         else:
-            return self.extensions_map['']
-
-    if not mimetypes.inited:
-        mimetypes.init() # try to read system mime.types
-    extensions_map = mimetypes.types_map.copy()
-    extensions_map.update({
-        '': 'application/octet-stream', # Default
-        '.py': 'text/plain',
-        '.c': 'text/plain',
-        '.h': 'text/plain',
-        })
+            return extensions_map['']
 
 if __name__ == '__main__':
     print 'Reading settings from %s...' %(setting_file_name)
