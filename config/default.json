@@ -4,5 +4,6 @@
   "base_url" : "files",
   "username" : "admin",
   "password" : "mypassword",
-  "realm" : "My Server"
+  "realm" : "My Server",
+  "force-download": false
 }

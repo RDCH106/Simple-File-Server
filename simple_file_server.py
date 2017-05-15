@@ -102,7 +102,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_AUTHHEAD(self):
         self.send_response(401)
         self.send_header('WWW-Authenticate', 'Basic realm=\"%s\"' % settings["realm"])
-        self.send_header('Content-type', 'text/html')
+        self.send_header('Content-Type', 'text/html')
         self.end_headers()
 
     def try_authenticate(self):
@@ -123,7 +123,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if self.path == "/logout":
             print 'Logout'
             self.send_response(401)
-            self.send_header('Content-type', 'text/html')
+            self.send_header('Content-Type', 'text/html')
             self.end_headers()
             self.wfile.write('Logout')
 
@@ -157,7 +157,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         length = f.tell()
         f.seek(0)
         self.send_response(200)
-        self.send_header("Content-type", "text/html")
+        self.send_header("Content-Type", "text/html")
         self.send_header("Content-Length", str(length))
         self.end_headers()
         if f:
@@ -249,7 +249,9 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.send_error(404, "File not found " + file_path)
             return None
         self.send_response(200)
-        self.send_header("Content-type", ctype)
+        self.send_header("Content-Type", ctype)
+        if (settings['force-download'] == True):
+            self.send_header("Content-Disposition", "attachment")
         fs = os.fstat(f.fileno())
         self.send_header("Content-Length", str(fs[6]))
         self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
@@ -314,7 +316,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         length = f.tell()
         f.seek(0)
         self.send_response(200)
-        self.send_header("Content-type", "text/html")
+        self.send_header("Content-Type", "text/html")
         self.send_header("Content-Length", str(length))
         self.end_headers()
         return f
@@ -365,7 +367,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         Argument is a PATH (a filename).
 
         Return value is a string of the form type/subtype,
-        usable for a MIME Content-type header.
+        usable for a MIME Content-Type header.
 
         The default implementation looks the file's extension
         up in the table self.extensions_map, using application/octet-stream
