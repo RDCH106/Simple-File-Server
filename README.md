@@ -14,6 +14,7 @@ This is a simple file server that
 * marks frequently visited directories for easier navigation
 
 Find the latest code version at https://github.com/RDCH106/Simple-File-Server
+
 Find the latest release at https://github.com/RDCH106/Simple-File-Server/releases
 
 ### How to configure server
@@ -31,6 +32,7 @@ To run the server in background redirecting the log `tmp` symtem folder:
 `python simple_file_server.py > /tmp/simple_file_server.log 2>&1 &` (**only in GNU/Linux**)
 
 ### How To Install
+
 Read and edit settings.py.
 
 `sudo ./install`
@@ -39,10 +41,12 @@ Once the script is completed, this file server should be registered as an upstar
 
 Check the file server at http://host:port/base_url
 
-###How To Uninstall
+### How To Uninstall
+
 `sudo ./uninstall`
 
-###Credit
+### Credits
+
 This is a fork of https://github.com/wonjohnchoi/Simple-Python-File-Server-With-Browse-Upload-and-Authentication written by [wonjohnchoi](https://github.com/wonjohnchoi) (who also forked of http://li2z.cn/?s=SimpleHTTPServerWithUpload  written by bones7456 who also was forked from http://www.opensource.apple.com/source/python/python-3/python/Lib/SimpleHTTPServer.py)
 
 This fork basically adds install scripts, authentication, and some more on top of the original code that supports directory browse and file upload.
